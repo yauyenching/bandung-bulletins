@@ -1,7 +1,17 @@
 library(tidyverse)
 
-bandung_data <- read.csv("bandung_data.csv", na.strings="")
+bandung_data <- read.csv("data/bandung_data.csv", na.strings="")
 bandung_data$text <- str_to_lower(bandung_data$text)
+
+df <- create_df(bandung_data)
+df <- 
+  df |> 
+  rename(
+    x = word,
+    value = freq
+  )
+
+write.csv(df, "data/bandung_all.csv", row.names=F)
 
 purpose <- bandung_data |> filter(topic=="purpose")
 general <- bandung_data |> filter(topic=="general")
@@ -18,22 +28,37 @@ create_df <- function(data) {
     tm_map(removePunctuation) %>%
     tm_map(stripWhitespace)
   docs <- tm_map(docs, content_transformer(tolower))
-  docs <- tm_map(docs, removeWords, stopwords("english"))
+  docs <- tm_map(docs, removeWords, c("conference", "will", stopwords("english")))
   
   dtm <- TermDocumentMatrix(docs) 
   matrix <- as.matrix(dtm) 
   words <- sort(rowSums(matrix),decreasing=TRUE) 
   df <- data.frame(word = names(words),freq=words)
+  row.names(df) <- NULL
   df
 }
 
+df <- create_df(bandung_data)
 purpose_df <- create_df(purpose)
 general_df <- create_df(general)
 communique_df <- create_df(communique)
 press_df <- create_df(press)
 address_df <- create_df(address)
 
-write.csv(df, "bandung_all.csv")
+set.seed(42)
+wordcloud(
+  words = df$word, 
+  freq = df$freq, 
+  max.words=100,
+  scale=c(4,.2),
+  random.order=FALSE,
+  colors=wes_palette("GrandBudapest2", 8, type = "continuous")
+)
+
+wordcloud2(
+  data = df
+  # color=wes_palette("GrandBudapest2", 8, type = "continuous")
+)
 
 df_test <- df |> left_join(purpose_df, by = "word", suffix = c(".all", ".purpose"))
 df_test <- df_test |> left_join(general_df, by = "word")
