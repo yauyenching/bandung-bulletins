@@ -23,7 +23,7 @@ server <- function(input, output) {
     row.names(df) <- NULL
     df
     
-    col_palette <- wes_palette("GrandBudapest2", 8, type = "continuous")
+    col_palette <- wesanderson::wes_palette("GrandBudapest2", 8, type = "continuous")
     col_palette <- rev(col_palette)
     # col_palette <- viridis::rocket(8)
     col_palette <- rep(col_palette, times = c(1,3,6,10,12,15,20,35))
@@ -37,7 +37,7 @@ server <- function(input, output) {
       color = col_palette,
       shape = 'circle',
       shuffle = FALSE,
-      size = 0.5,
+      size = 0.6,
       backgroundColor = "#272B30"
     )
   }
@@ -67,27 +67,33 @@ server <- function(input, output) {
       c(input$addressType, NA)
     })
   
-  output$wordcloud <-
-    renderWordcloud2({
-      selected_data <-
-        bandung_data |> 
-        filter(
-          topic        %in% selected_topics(),
-          press_region %in% selected_regions(),
-          address_type %in% selected_address_type(),
-        )
-      if (selected_delegates() != "All") {
-        selected_data <-
-          selected_data |> 
-          filter(delegate %in% selected_delegates())
-      }
-      final_selected_data <-
-        reactive(if (input$dualNationality) {
-          selected_data |> 
-            filter(subtopic == "dual nationality")
-        } else {
-          selected_data
-        })
-      create_wordcloud(final_selected_data())
+  observeEvent(input$windowResize, {
+    output$ui <- renderUI({
+      wordcloud2Output("wordcloud", width = input$windowResize)
     })
+    
+    output$wordcloud <-
+      renderWordcloud2({
+        selected_data <-
+          bandung_data |> 
+          filter(
+            topic        %in% selected_topics(),
+            press_region %in% selected_regions(),
+            address_type %in% selected_address_type(),
+          )
+        if (selected_delegates() != "All") {
+          selected_data <-
+            selected_data |> 
+            filter(delegate %in% selected_delegates())
+        }
+        final_selected_data <-
+          reactive(if (input$dualNationality) {
+            selected_data |> 
+              filter(subtopic == "dual nationality")
+          } else {
+            selected_data
+          })
+        create_wordcloud(final_selected_data())
+      })
+  })
 }
