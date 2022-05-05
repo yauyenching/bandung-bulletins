@@ -1,5 +1,6 @@
 library(tidyverse)
-
+library(tm)
+library(wordcloud2)
 bandung_data <- read.csv("data/bandung_data.csv", na.strings="")
 bandung_data$text <- str_to_lower(bandung_data$text)
 
@@ -20,8 +21,9 @@ press <- bandung_data |> filter(topic=="press")
 address <- bandung_data |> filter(topic=="address")
 
 library(tm)
-create_df <- function(data) {
-  text <- data$text
+create_df <- function(word_data) {
+  text <- word_data$text
+  text <- iconv(text, to = "UTF-8")
   docs <- Corpus(VectorSource(text))
   docs <- docs %>%
     tm_map(removeNumbers) %>%
@@ -55,9 +57,19 @@ wordcloud(
   colors=wes_palette("GrandBudapest2", 8, type = "continuous")
 )
 
+test_df <- df |> head(100)
+
+colors <- wes_palette("GrandBudapest2", 8, type = "continuous")
+colors <- rev(colors)
+colors <- rep(colors, times = c(1,3,6,10,12,15,20,35))
+
 wordcloud2(
-  data = df
-  # color=wes_palette("GrandBudapest2", 8, type = "continuous")
+  data = test_df,
+  fontFamily = "Century Gothic",
+  color=colors,
+  shape = 'circle',
+  shuffle = FALSE,
+  size = 0.5
 )
 
 df_test <- df |> left_join(purpose_df, by = "word", suffix = c(".all", ".purpose"))

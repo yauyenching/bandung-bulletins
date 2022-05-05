@@ -1,4 +1,5 @@
 ui <- fluidPage(
+  theme = shinytheme("slate"),
   titlePanel("1955 Bandung Asian-African Conference Bulletins: A Visual Summary"),
   sidebarLayout(
     sidebarPanel(
@@ -17,34 +18,39 @@ ui <- fluidPage(
         label = strong("Show only China-Indonesia dual nationality related content")
       ),
       
+      checkboxInput("removeWords", "Remove specific words?", FALSE),
+      conditionalPanel(
+        condition = "input.removeWords == 1",
+        textAreaInput("wordsToRemove", "Words to remove (separated by comma)", rows = 1)
+      ),
+      
       # Display select press region only if press is checked
       conditionalPanel(
-        condition = "input.topic == 'press'",
+        condition = "input.topic.indexOf('press') > -1",
         checkboxGroupInput(
           inputId = "pressRegion",
           label = "Press region",
-          choices = unique(bandung_data$press_region)
+          choices = c("Asia and Africa", "Australia", "Europe", "America")
         )
       ),
       
-      # Display select delegate only if address is selected
+      # Select Delegates
       conditionalPanel(
-        condition = "input.topic == 'delegate'",
+        condition = "input.topic.indexOf('address') > -1",
         selectInput(
           inputId = "delegateHead",
           label = "Delegate head",
-          choices = unique(bandung_data$delegate),
-          multiple = TRUE
+          choices = c("All", unique(bandung_data$delegate)[2:35])
         ),
         checkboxGroupInput(
-          inputId = "addresstype",
+          inputId = "addressType",
           label = "Opening or closing address",
-          choices = unique(bandung_data$address_type)
+          choices = c("Opening", "Closing")
         )
       )
     ),
     mainPanel(
-      plotOutput(outputId = "wordcloud", width="100%")
+      wordcloud2Output("wordcloud")
     )
   )
 )
