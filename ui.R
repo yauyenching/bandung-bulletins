@@ -29,7 +29,7 @@ ui <- fluidPage(
           # Select dual nationality subtopic
           checkboxInput(
             inputId = "dualNationality",
-            label = strong("Show only China-Indonesia dual nationality related content")
+            label = strong("Show only Sino-Indonesia dual nationality related content")
           ),
           
           checkboxInput("removeWords", strong("Remove specific words?"), FALSE),
@@ -91,18 +91,38 @@ in the face of great world powers."),
           br(),
           h4(strong("What is this Project?"), align="center"),
           p("
-This project aims to provide an accessible visual summary over the conference
+This project aims to provide an accessible visual summary of the conference
 bulletin contents which were made publicly available by the Indonesian ministry
 of information. PDFs of the bulletins can be accessed ",
             a(href="https://bandung60.wordpress.com/bandung-bulletin/", "here."),
             "
 Each issue contained conference documents, delegate addresses, summaries of world
 press opinions, and other material.
-I converted the pages in the PDFs to text using an optical character recognition
-tool. I left out content pertaining to conference logistics and delegate profiles.
-The digitized text can be found in the GitHub repo.
+            ",
+          ),
+          p("
+I digitized the contents (leaving out delegate profiles and conference logistics)
+which can be found ",
+            a(href="https://github.com/yauyenching/bandung-bulletins/tree/main/document_text", "here."),
             "
-          )
+Then, I produced an interactive word cloud to provide a visual summary of the most",
+            strong(" frequent words "),
+            "
+in the bulletin text. We removed the word 'conference' from the output.
+The text can be filtered according to content categories, delegate head,
+and press region. You can also remove specific
+words from the word cloud through text input.
+            "),
+          p("
+This project is not perfect. The word cloud does not dynamically resize in the event
+of window resizing, so one should refresh the browser page to resize the word cloud.
+In the event the word cloud disappears/ceases to load, one should refresh the page
+as well. Currently, there is no plan to revisit these issues.
+In addition, my digitization of the bulletin documents is not fully accurate due to the
+low quality of the PDFs, so mispelled words (e.g., 'asianafrican') can be found which
+may have affected the accuracy of the output. However, we found the digitized text to be
+mostly accurate.
+            ")
         )
       )
     )
