@@ -37,7 +37,7 @@ server <- function(input, output) {
       color = col_palette,
       shape = 'circle',
       shuffle = FALSE,
-      size = 0.6,
+      size = 0.65,
       backgroundColor = "#272B30"
     )
   }
@@ -58,7 +58,7 @@ server <- function(input, output) {
     reactive(if (is.null(input$delegateHead)) {
       unique(bandung_data$delegate)
     } else {
-      c(input$delegateHead, NA)
+      input$delegateHead
     })
   selected_address_type <-
     reactive(if (is.null(input$addressType)) {
@@ -67,33 +67,33 @@ server <- function(input, output) {
       c(input$addressType, NA)
     })
   
-  observeEvent(input$windowResize, {
-    output$ui <- renderUI({
-      wordcloud2Output("wordcloud", width = input$windowResize)
-    })
-    
-    output$wordcloud <-
-      renderWordcloud2({
-        selected_data <-
+  output$wordcloud <-
+    renderWordcloud2({
+      selected_data <-
+        if (selected_topics() != "All") {
           bandung_data |> 
-          filter(
-            topic        %in% selected_topics(),
-            press_region %in% selected_regions(),
-            address_type %in% selected_address_type(),
-          )
-        if (selected_delegates() != "All") {
-          selected_data <-
-            selected_data |> 
-            filter(delegate %in% selected_delegates())
+            filter(topic %in% selected_topics())
+        } else {
+          bandung_data
         }
-        final_selected_data <-
-          reactive(if (input$dualNationality) {
-            selected_data |> 
-              filter(subtopic == "dual nationality")
-          } else {
-            selected_data
-          })
-        create_wordcloud(final_selected_data())
-      })
-  })
+      selected_data <-
+        selected_data |> 
+        filter(
+          press_region %in% selected_regions(),
+          address_type %in% selected_address_type(),
+        )
+      if (selected_delegates() != "All") {
+        selected_data <-
+          selected_data |> 
+          filter(delegate %in% selected_delegates())
+      }
+      final_selected_data <-
+        reactive(if (input$dualNationality) {
+          selected_data |> 
+            filter(subtopic == "dual nationality")
+        } else {
+          selected_data
+        })
+      create_wordcloud(final_selected_data())
+    })
 }
