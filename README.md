@@ -14,6 +14,14 @@ This project aims to provide an easily accessible at-a-glance visual summary of 
 ## 🛠️ Implementation ##
 This web app was made using the R [shiny](https://shiny.rstudio.com/) package and deployed on the platform [shinyapps.io](https://www.shinyapps.io/).
 
+## ⚙️ Building the Project ##
+To deploy the web application locally, clone the repository and navigate to its directory. Then, in the R console,
+```
+install.packages("shiny") # install the shiny package
+library(shiny) # load the required package
+runApp() # run a local instance of the web app
+```
+
 ## 📂 File Structure ##
 This is a single-file app. Both the UI and server-side code can be found in `.\app.R`.
 
