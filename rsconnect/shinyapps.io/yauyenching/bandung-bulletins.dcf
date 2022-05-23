@@ -5,7 +5,7 @@ account: yauyenching
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6248300
-bundleId: 5877652
+bundleId: 5881141
 url: https://yauyenching.shinyapps.io/bandung-bulletins/
-when: 1651845292.0311
-lastSyncTime: 1651845292.0311
+when: 1651928711.02283
+lastSyncTime: 1651928711.02283

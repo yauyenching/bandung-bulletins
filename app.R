@@ -20,7 +20,6 @@ ui <- fluidPage(
   h4("A Visual Summary" |> str_to_upper(), align="center", 
      style="color:#A3A3A3;margin-bottom:25px;"),
   div(tabsetPanel(
-    # br(),
     # Word cloud tab
     tabPanel(
       title = "Word Cloud",
@@ -31,7 +30,7 @@ ui <- fluidPage(
           selectInput(
             inputId = "topic",
             label = strong("Bulletin content topic"),
-            choices = c("All", unique(bandung_data$topic)),
+            choices = c("All", "general", "purpose", "communique", "press", "address"),
           ),
           
           # Select dual nationality subtopic
@@ -59,14 +58,14 @@ ui <- fluidPage(
           selectInput(
             inputId = "delegateHead",
             label = "Delegate head",
-            choices = c("All", unique(bandung_data$delegate)[2:35])
+            choices = c("All", unique(bandung_data$delegate)[2:35] |> sort())
           ),
           conditionalPanel(
             condition = "input.topic.indexOf('address') > -1",
-            checkboxGroupInput(
+            radioButtons(
               inputId = "addressType",
               label = "Opening or closing address",
-              choices = c("Opening", "Closing")
+              choices = c("All", "Opening", "Closing")
             )),
           br(),
           br(),
@@ -90,10 +89,10 @@ ui <- fluidPage(
 In April, 1955, 
 delegates from 29 Asian and African countries and regions
 gathered in Bandung, Indonesia to discuss navigating a postcolonial world
-and calling for greater solidarity, mutual respect, non-aggression, and equality.
-This event marked an emerging community of developing nations, many of which were 
+and call for greater solidarity, mutual respect, non-aggression, and equality.
+This event, the Bandung Confernce (also known as the Asian-African Conference), marked an emerging community of developing nations, many of which were 
 newly independent from colonial powers.
-Today, the Asian-African Conference is recognized as an example of Afro-Asian solidarity and one of the
+Today, the Bandung Conference is recognized as a key example of international Afro-Asian solidarity and one of the
 largest cooperative efforts between Third World countries to articulate a shared vision
 in the face of great world powers."),
           br(),
@@ -128,7 +127,7 @@ In the event the word cloud disappears/ceases to load, one should refresh the pa
 as well. Currently, there is no plan to revisit these issues.
 In addition, my digitization of the bulletin documents is not fully accurate due to the
 low quality of the PDFs, so mispelled words (e.g., 'asianafrican') can be found which
-may have affected the accuracy of the output. However, we found the digitized text to be
+may have affected the accuracy of the output. However, I found the digitized text to be
 mostly accurate.
             ")
         )
@@ -140,7 +139,6 @@ mostly accurate.
     a(href="https://www.linkedin.com/in/yau-yen-ching/", icon("linkedin")),
     align="center", 
     style="position: relative;")
-  # left: 50%; top: 750px; margin-left: -125px;
 )
 
 server <- function(input, output) {
@@ -170,14 +168,10 @@ server <- function(input, output) {
     
     col_palette <- wesanderson::wes_palette("GrandBudapest2", 8, type = "continuous")
     col_palette <- rev(col_palette)
-    # col_palette <- viridis::rocket(8)
     col_palette <- rep(col_palette, times = c(1,3,6,10,12,15,20,35))
     
     wordcloud2(
       data = df |> head(100),
-      # create_df(final_selected_data()) |> 
-      # arrange(desc(freq)) |> 
-      # head(100),
       fontFamily = "Century Gothic",
       color = col_palette,
       shape = 'circle',
@@ -206,10 +200,10 @@ server <- function(input, output) {
       input$delegateHead
     })
   selected_address_type <-
-    reactive(if (is.null(input$addressType)) {
-      unique(bandung_data$address_type)
+    reactive(if (input$addressType != "All") {
+      input$addressType
     } else {
-      c(input$addressType, NA)
+      c("Opening", "Closing", NA)
     })
   
   output$wordcloud <-
