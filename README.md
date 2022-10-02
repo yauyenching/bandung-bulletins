@@ -1,7 +1,7 @@
 <h1 align="center">Conference Bulletins Interactive Word Cloud</h1>
 <p align="center">
-  <a href = "https://www.r-project.org/"><img src="https://img.shields.io/badge/Made%20with-R-23425C?logo=r"></a>
-  <a href = "https://github.com/yauyenching/bandung-bulletins/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational"></a>
+  <a href = "https://www.r-project.org/"><img src="https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white"></a>
+  <a href = "https://github.com/yauyenching/bandung-bulletins/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge"></a>
 </p>
 This project aims to provide an easily accessible at-a-glance visual summary of the 1955 Asian-African Conference bulletin contents which were made publicly available by the Indonesian ministry of information. Users can filter the output according to content categories, delegate head, and press region. This project was completed as part of my digital humanities project for the module YHU3263 The Bandung Conference of 1955 at Yale-NUS College.
 
